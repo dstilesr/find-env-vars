@@ -68,12 +68,17 @@ class EnvFinder(object):
         return cls.find_in_string(contents)
 
     @classmethod
-    def find_in_directory(cls, directory: str) -> List[str]:
+    def find_in_directory(
+            cls,
+            directory: str,
+            only_python_packages: bool = True) -> List[str]:
         """
         Finds all matches in the python files of the given directory and its
         child directories.
 
         :param directory: Path to a directory.
+        :param only_python_packages: Search only in subdirectories that are
+            python packages.
         :return:
         """
         out = []
@@ -81,7 +86,8 @@ class EnvFinder(object):
             full_path = os.path.join(directory, fp)
 
             if os.path.isdir(full_path):
-                out += cls.find_in_directory(full_path)
+                if "__init__.py" in os.listdir(full_path):
+                    out += cls.find_in_directory(full_path)
 
             elif cls.PYTHON.search(full_path) is not None:
                 out += cls.find_in_file(full_path)
