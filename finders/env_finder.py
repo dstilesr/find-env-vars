@@ -13,8 +13,6 @@ class EnvFinder(BaseFinder):
 
     GETENV_REGEX = re.compile(r"(?<=getenv\()\s*['\"][A-Z_]+")
     ENVIRON_REGEX = re.compile(r"(?<=environ\.get\()\s*['\"][A-Z_]+")
-    CLEANUP_REGEX = re.compile(r"[\s'\"]")
-    PYTHON = re.compile(r"\.py$|\.pyx$")
 
     def __init__(self, path: str, out_path: str = ".env.example.json"):
 

@@ -1,3 +1,4 @@
+import re
 from typing import Callable, List
 
 
@@ -6,6 +7,8 @@ class BaseFinder(object):
     Abstract class to represent finder objects.
     """
 
+    CLEANUP_REGEX = re.compile(r"[\s'\"]")
+    PYTHON = re.compile(r"\.py$|\.pyx$")
     _method: Callable[[str], List[str]]
     _matches: List[str]
     _path: str
