@@ -1,10 +1,11 @@
 import re
 import os
 import json
-from typing import List, Callable
+from typing import List
+from .common import BaseFinder
 
 
-class EnvFinder(object):
+class EnvFinder(BaseFinder):
     """
     Class to find all environment variables mentioned in a python script
     or package / directory.
@@ -14,7 +15,6 @@ class EnvFinder(object):
     ENVIRON_REGEX = re.compile(r"(?<=environ\.get\()\s*['\"][A-Z_]+")
     CLEANUP_REGEX = re.compile(r"[\s'\"]")
     PYTHON = re.compile(r"\.py$|\.pyx$")
-    _method: Callable[[str], List[str]]
 
     def __init__(self, path: str, out_path: str = ".env.example.json"):
 
@@ -27,11 +27,7 @@ class EnvFinder(object):
 
         self._path = path
         self._out_path = out_path
-        self._matches = None
-
-    @property
-    def path(self) -> str:
-        return self._path
+        self._matches = []
 
     @property
     def out_path(self) -> str:
@@ -70,15 +66,12 @@ class EnvFinder(object):
     @classmethod
     def find_in_directory(
             cls,
-            directory: str,
-            only_python_packages: bool = True) -> List[str]:
+            directory: str) -> List[str]:
         """
         Finds all matches in the python files of the given directory and its
         child directories.
 
         :param directory: Path to a directory.
-        :param only_python_packages: Search only in subdirectories that are
-            python packages.
         :return:
         """
         out = []
@@ -86,7 +79,7 @@ class EnvFinder(object):
             full_path = os.path.join(directory, fp)
 
             if os.path.isdir(full_path):
-                if "__init__.py" in os.listdir(full_path):
+                if cls.is_python_package(full_path):
                     out += cls.find_in_directory(full_path)
 
             elif cls.PYTHON.search(full_path) is not None:
@@ -94,19 +87,9 @@ class EnvFinder(object):
 
         return out
 
-    def find_matches(self) -> List[str]:
-        """
-        Finds all matches in the file/directory to which this object refers.
-
-        :return: List of unique strings.
-        """
-        if self._matches is not None:
-            out = self._matches
-        else:
-            out = list(set(self._method(self._path)))
-            out.sort()
-            self._matches = out
-        return out
+    @staticmethod
+    def is_python_package(directory: str) -> bool:
+        return "__init__.py" in os.listdir(directory)
 
     def dump_matches(self):
         """
