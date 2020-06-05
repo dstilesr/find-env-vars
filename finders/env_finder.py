@@ -1,8 +1,7 @@
 import re
 import os
 import json
-from typing import List
-from .common import BaseFinder
+from .base import BaseFinder
 
 
 class EnvFinder(BaseFinder):
@@ -11,20 +10,27 @@ class EnvFinder(BaseFinder):
     or package / directory.
     """
 
+    JSON_TEMPLATE = ".env.example.json"
+    ENV_TEMPLATE = ".env.example"
+
     _patterns = [
         re.compile(r"(?<=getenv\()\s*['\"][A-Z_]+"),
         re.compile(r"(?<=environ\.get\()\s*['\"][A-Z_]+")
     ]
 
-    def __init__(self, path: str, out_path: str = ".env.example.json"):
+    def __init__(self, path: str, out_path: str):
         super().__init__(path=path)
+
+        if not os.path.isdir(out_path):
+            raise ValueError("out_path must be a directory!")
+
         self._out_path = out_path
 
     @property
     def out_path(self) -> str:
         return self._out_path
 
-    def dump_matches(self):
+    def dump_matches_json(self):
         """
         Saves the matches to a json example template.
 
@@ -38,6 +44,20 @@ class EnvFinder(BaseFinder):
             }
             for m in self.find_matches()
         ]
-        with open(self._out_path, "w") as f:
+        json_path = os.path.join(self.out_path, self.JSON_TEMPLATE)
+        with open(json_path, "w") as f:
             json.dump(matches, f)
             print("INFO: Variables dumped to %s" % self._out_path)
+
+    def dump_matches_env(self):
+        """
+        Save the matches to an env.example file.
+
+        :return:
+        """
+
+        matches = [m + "=" for m in self.find_matches()]
+        env_path = os.path.join(self.out_path, self.ENV_TEMPLATE)
+        with open(env_path, "w") as f:
+            f.write("\n".join(matches))
+            print("INFO: Variables dumped to %s" % env_path)

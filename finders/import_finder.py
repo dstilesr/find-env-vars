@@ -1,5 +1,5 @@
 import re
-from .common import BaseFinder
+from .base import BaseFinder
 
 
 class ImportFinder(BaseFinder):
