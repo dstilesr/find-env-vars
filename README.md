@@ -1,19 +1,19 @@
 # README
 
 # Contents
-- [About](#About)
-- [Use Example](#Use Example)
-- [New Finders](#New Finders)
+* [About](#about)
+* [Use Example](#use-example)
+* [New Finders](#new-finders)
 
 
-#About
+# About
 
 This is a small python package containing classes that find certain patterns in
 python files such as the environment variables used or the list of imports of
 a package. This was done mainly as an excercise in the use of regular
 expressions.
 
-#Use Example
+# Use Example
 
 ```python
 import finders
@@ -24,7 +24,7 @@ envs = finders.EnvFinder(project)
 print(envs.find_matches())
 ```
 
-#New Finders
+# New Finders
 
 In order to create a new pattern finder you can simply create a subclass of
 `BaseFinder` and store the list of patterns you want to match in the class
