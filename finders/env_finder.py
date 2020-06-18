@@ -18,8 +18,11 @@ class EnvFinder(BaseFinder):
         re.compile(r"(?<=environ\.get\()\s*['\"][A-Z_]+")
     ]
 
-    def __init__(self, path: str, out_path: str):
+    def __init__(self, path: str, out_path: str = None):
         super().__init__(path=path)
+
+        if out_path is None:
+            out_path = path
 
         if not os.path.isdir(out_path):
             raise ValueError("out_path must be a directory!")
@@ -47,7 +50,7 @@ class EnvFinder(BaseFinder):
         json_path = os.path.join(self.out_path, self.JSON_TEMPLATE)
         with open(json_path, "w") as f:
             json.dump(matches, f)
-            print("INFO: Variables dumped to %s" % self._out_path)
+            print("INFO: Variables dumped to %s" % json_path)
 
     def dump_matches_env(self):
         """
@@ -61,3 +64,14 @@ class EnvFinder(BaseFinder):
         with open(env_path, "w") as f:
             f.write("\n".join(matches))
             print("INFO: Variables dumped to %s" % env_path)
+
+    def dump_matches_all(self):
+        """
+        Save the matches to both an .env.example and a .env.example.json.
+
+        :return:
+        """
+
+        self.dump_matches_env()
+        self.dump_matches_json()
+
