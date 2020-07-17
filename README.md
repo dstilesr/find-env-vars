@@ -40,7 +40,7 @@ class EndQFinder(BaseFinder):
     """
 
     _patterns = [
-        re.compile(r"[a-zA-Z]*[qQ](?=[^a-zA-Z])")
+        re.compile(r"[a-zA-Z]*[qQ](?![a-zA-Z])")
     ]
 
 ```

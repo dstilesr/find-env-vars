@@ -18,11 +18,11 @@ class EnvFinder(BaseFinder):
         re.compile(r"(?<=environ\.get\()\s*['\"][A-Z_]+")
     ]
 
-    def __init__(self, path: str, out_path: str = None):
-        super().__init__(path=path)
+    def __init__(self, string: str, out_path: str = None):
+        super().__init__(string=string)
 
         if out_path is None:
-            out_path = path
+            out_path = string
 
         if not os.path.isdir(out_path):
             raise ValueError("out_path must be a directory!")

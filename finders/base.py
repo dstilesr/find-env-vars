@@ -15,15 +15,15 @@ class BaseFinder(object):
     _matches: List[str]
     _path: str
 
-    def __init__(self, path: str):
-        if os.path.isdir(path):
+    def __init__(self, string: str):
+        if os.path.isdir(string):
             self._method = self.find_in_directory
-        elif self.PYTHON.search(path) is not None:
+        elif self.PYTHON.search(string) is not None:
             self._method = self.find_in_file
         else:
-            raise ValueError("Path must be a python file or a directory!")
+            self._method = self.find_in_string
 
-        self._path = path
+        self._path = string
         self._matches = []
 
     @property
