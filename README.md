@@ -24,6 +24,13 @@ envs = finders.EnvFinder(project)
 print(envs.find_matches())
 ```
 
+Additionally, you can find and dump the environment variables of a project running
+the module with:
+```shell script
+python -m finders <path-to-project>
+```
+
+
 # New Finders
 
 In order to create a new pattern finder you can simply create a subclass of
