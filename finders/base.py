@@ -1,6 +1,6 @@
 import re
 import os
-from typing import Callable, List
+from typing import Callable, List, Dict
 
 
 class BaseFinder(object):
@@ -54,11 +54,11 @@ class BaseFinder(object):
     @classmethod
     def find_in_file(cls, filepath: str) -> List[str]:
         """
+        Find matches in the given text (python) file.
 
         :param filepath:
         :return:
         """
-
         if not os.path.isfile(filepath):
             raise FileNotFoundError("File does not exist!")
 
@@ -103,5 +103,51 @@ class BaseFinder(object):
             out = list(set(self._method(self._path)))
             out.sort()
             self._matches = out
+        return out
+
+    def _detail_dir(
+            self,
+            directory: str,
+            only_python: bool) -> Dict[str, List[str]]:
+        """
+        Recursive helper function for detail method.
+
+        :param directory: Directory in which to search.
+        :param only_python: Ignore subdirectories that aren't python packages.
+        :return:
+        """
+        out = {}
+
+        for fp in os.listdir(directory):
+            path = os.path.join(directory, fp)
+
+            try:
+                if os.path.isdir(path):
+                    if only_python and not self.is_python_package(path):
+                        pass
+                    else:
+                        out.update(self._detail_dir(path, only_python))
+
+                elif self.PYTHON.search(fp) is not None:
+                    finds = self.find_in_file(path)
+                    if len(finds) > 0:
+                        out.update([(path, finds)])
+
+            except (PermissionError, UnicodeDecodeError, FileNotFoundError):
+                print(f"Could not search path: {path}")
+
+        return out
+
+    def detail(self, only_python_packs: bool = True) -> Dict[str, List[str]]:
+        """
+        Details which files in a directory contain which matches.
+
+        :param only_python_packs: Search only in python packages within the
+            given directory.
+        :return: Dictionary: filepath -> matches
+        """
+        out = {}
+        if os.path.isdir(self.path):
+            out = self._detail_dir(self._path, only_python_packs)
         return out
 

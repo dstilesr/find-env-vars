@@ -6,12 +6,12 @@ from .env_finder import EnvFinder
 if len(argv) < 2:
     print("ERROR")
     print("USAGE: ")
-    print("python -m finders <filepath>")
+    print("python -m finders <directory path>")
     exit(1)
 
-if not os.path.exists(argv[1]):
+if not os.path.isdir(argv[1]):
     print("ERROR")
-    print("Invalid path! Must point to a file or directory.")
+    print("Invalid path! Must point to a directory.")
     exit(1)
 
 # Find and dump matches
