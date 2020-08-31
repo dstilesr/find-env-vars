@@ -18,3 +18,4 @@ if not os.path.isdir(argv[1]):
 finder = EnvFinder(argv[1])
 finder.dump_matches_all()
 print("INFO: DONE!")
+exit(0)

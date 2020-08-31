@@ -9,7 +9,7 @@ class BaseFinder(object):
     """
 
     CLEANUP_REGEX = re.compile(r"[\s'\"]")
-    PYTHON = re.compile(r"\.py$|\.pyx$")
+    PYTHON_EXT = re.compile(r"\.pyx?$")
     _patterns: List[re.Pattern]
     _method: Callable[[str], List[str]]
     _matches: List[str]
@@ -18,7 +18,7 @@ class BaseFinder(object):
     def __init__(self, string: str):
         if os.path.isdir(string):
             self._method = self.find_in_directory
-        elif self.PYTHON.search(string) is not None:
+        elif self.PYTHON_EXT.search(string) is not None:
             self._method = self.find_in_file
         else:
             self._method = self.find_in_string
@@ -86,7 +86,7 @@ class BaseFinder(object):
                 if cls.is_python_package(full_path):
                     out += cls.find_in_directory(full_path)
 
-            elif cls.PYTHON.search(full_path) is not None:
+            elif cls.PYTHON_EXT.search(full_path) is not None:
                 out += cls.find_in_file(full_path)
 
         return out
@@ -128,7 +128,7 @@ class BaseFinder(object):
                     else:
                         out.update(self._detail_dir(path, only_python))
 
-                elif self.PYTHON.search(fp) is not None:
+                elif self.PYTHON_EXT.search(fp) is not None:
                     finds = self.find_in_file(path)
                     if len(finds) > 0:
                         out.update([(path, finds)])
