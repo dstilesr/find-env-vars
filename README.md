@@ -30,6 +30,10 @@ the module directly from the terminal with:
 ```shell script
 python -m finders <path-to-project>
 ```
+You can also pass the path to the project by name as follows:
+```shell
+python -m finders --source_dir=<path-to-project>
+```
 
 
 ## New Finders
